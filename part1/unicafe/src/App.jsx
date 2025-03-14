@@ -28,6 +28,8 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
+  let feedbackCount = good + neutral + bad
+
   const handleGoodFeedback = () => {
     setGood(good + 1)
   }
@@ -47,12 +49,18 @@ const App = () => {
       <Button onClick={handleNeutralFeedback} text="neutral" />
       <Button onClick={handleBadFeedback} text="bad" />
       <Display text="statistics" />
-      <Statistics type="good" count={good}/>
-      <Statistics type="neutral" count={neutral}/>
-      <Statistics type="bad" count={bad}/>
-      <Statistics type="all" count={good + neutral + bad}/>
-      <Statistics type="average" count={(good*1 + neutral*0 + bad*-1) / (good + neutral + bad)}/>
-      <Statistics type="positive" count={(good / (good + neutral + bad))*100}/>
+      {feedbackCount > 0 ? (
+        <div>
+          <Statistics type="good" count={good}/>
+          <Statistics type="neutral" count={neutral}/>
+          <Statistics type="bad" count={bad}/>
+          <Statistics type="all" count={good + neutral + bad}/>
+          <Statistics type="average" count={(good*1 + neutral*0 + bad*-1) / (good + neutral + bad)}/>
+          <Statistics type="positive" count={(good / (good + neutral + bad))*100}/>
+        </div>
+      ) : (
+        <div>No feedback given</div>
+      )}
     </div>
   )
 }
