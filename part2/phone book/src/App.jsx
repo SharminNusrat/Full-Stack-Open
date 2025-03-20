@@ -3,7 +3,9 @@ import axios from "axios"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
+import Notification from "./components/Notification"
 import personService from "./services/persons"
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newSearchValue, setNewSearchValue] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -42,10 +45,14 @@ const App = () => {
             setFilteredPersons(updatedPersons.filter(person =>
               person.name.toLowerCase().includes(newSearchValue.toLowerCase())
             ))
+            setMessage(`Updated ${returnedPerson.name}`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 7000);
             setNewName('')
             setNewNumber('')
           })
-          return
+        return
       }
     }
 
@@ -61,6 +68,10 @@ const App = () => {
         setFilteredPersons(updatedPersons.filter(person =>
           person.name.toLowerCase().includes(newSearchValue.toLowerCase())
         ))
+        setMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 7000);
         setNewName('')
         setNewNumber('')
       })
@@ -77,6 +88,10 @@ const App = () => {
           setFilteredPersons(updatedPersons.filter(person =>
             person.name.toLowerCase().includes(newSearchValue.toLowerCase())
           ))
+          setMessage(`Removed ${returnedPerson.name}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 7000);
         })
     }
   }
@@ -100,6 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter text="filter shown with" value={newSearchValue} onChange={handleSearchValueChange} />
       <h3>add a new</h3>
       <PersonForm
