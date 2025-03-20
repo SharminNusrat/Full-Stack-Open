@@ -14,6 +14,7 @@ const App = () => {
   const [newSearchValue, setNewSearchValue] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
   const [message, setMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -52,6 +53,12 @@ const App = () => {
             setNewName('')
             setNewNumber('')
           })
+          .catch(error => {
+            setErrorMessage(`Information of ${updatedPerson.name} has already been removed from server`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 7000);
+          })  
         return
       }
     }
@@ -93,6 +100,13 @@ const App = () => {
             setMessage(null)
           }, 7000);
         })
+        .catch(error => {
+          setErrorMessage(`Information of ${person.name} has already been removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 7000);
+        }) 
+        return
     }
   }
 
@@ -115,7 +129,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} errorMessage={errorMessage} />
       <Filter text="filter shown with" value={newSearchValue} onChange={handleSearchValueChange} />
       <h3>add a new</h3>
       <PersonForm
