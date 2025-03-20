@@ -25,11 +25,30 @@ const App = () => {
 
   const addNewPerson = (event) => {
     event.preventDefault()
-    if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
-      return
+
+    const existingPerson = persons.find(p => p.name === newName)
+    if (existingPerson) {
+      if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+        const updatedPerson = {
+          ...existingPerson,
+          number: newNumber
+        }
+
+        personService
+          .update(updatedPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            const updatedPersons = persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson)
+            setPersons(updatedPersons)
+            setFilteredPersons(updatedPersons.filter(person =>
+              person.name.toLowerCase().includes(newSearchValue.toLowerCase())
+            ))
+            setNewName('')
+            setNewNumber('')
+          })
+          return
+      }
     }
+
     const newPerson = {
       name: newName,
       number: newNumber
@@ -49,17 +68,17 @@ const App = () => {
 
   const deletePerson = (id) => {
     const person = persons.find(p => p.id === id)
-    if(window.confirm(`Delete ${person.name} ?`)) {
+    if (window.confirm(`Delete ${person.name} ?`)) {
       personService
-      .deleteObject(id)
-      .then(returnedPerson => {
-        const updatedPersons = persons.filter(person => person.id !== returnedPerson.id)
-        setPersons(updatedPersons)
-        setFilteredPersons(updatedPersons.filter(person =>
-          person.name.toLowerCase().includes(newSearchValue.toLowerCase())
-        ))
-      })
-    } 
+        .deleteObject(id)
+        .then(returnedPerson => {
+          const updatedPersons = persons.filter(person => person.id !== returnedPerson.id)
+          setPersons(updatedPersons)
+          setFilteredPersons(updatedPersons.filter(person =>
+            person.name.toLowerCase().includes(newSearchValue.toLowerCase())
+          ))
+        })
+    }
   }
 
   const handleNameChange = (event) => {
@@ -91,7 +110,7 @@ const App = () => {
         addNewPerson={addNewPerson}
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson}/>
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />
     </div>
   )
 }
