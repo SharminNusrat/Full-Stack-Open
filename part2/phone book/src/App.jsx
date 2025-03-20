@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
@@ -16,7 +16,7 @@ const App = () => {
       .get('http://localhost:3001/persons')
       .then(response => {
         setPersons(response.data)
-        setFilteredPersons(response.data.filter(person => 
+        setFilteredPersons(response.data.filter(person =>
           person.name.toLowerCase().includes(newSearchValue.toLowerCase())
         ))
       })
@@ -24,7 +24,7 @@ const App = () => {
 
   const addNewPerson = (event) => {
     event.preventDefault()
-    if(persons.some(person => person.name === newName)) {
+    if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
       setNewName('')
       return
@@ -33,13 +33,17 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    const updatedPersons = persons.concat(newPerson)
-    setPersons(updatedPersons)
-    setFilteredPersons(updatedPersons.filter(person => 
-      person.name.toLowerCase().includes(newSearchValue.toLowerCase())
-    ))
-    setNewName('')
-    setNewNumber('')
+    axios
+      .post('http://localhost:3001/persons', newPerson)
+      .then(response => {
+        const updatedPersons = persons.concat(response.data)
+        setPersons(updatedPersons)
+        setFilteredPersons(updatedPersons.filter(person =>
+          person.name.toLowerCase().includes(newSearchValue.toLowerCase())
+        ))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleNameChange = (event) => {
@@ -63,8 +67,8 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter text="filter shown with" value={newSearchValue} onChange={handleSearchValueChange} />
       <h3>add a new</h3>
-      <PersonForm 
-        newName={newName} 
+      <PersonForm
+        newName={newName}
         newNumber={newNumber}
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
