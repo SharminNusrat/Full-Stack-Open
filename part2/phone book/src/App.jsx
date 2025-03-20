@@ -3,6 +3,7 @@ import axios from "axios"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
+import personService from "./services/persons"
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,11 +13,11 @@ const App = () => {
   const [filteredPersons, setFilteredPersons] = useState(persons)
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-        setFilteredPersons(response.data.filter(person =>
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+        setFilteredPersons(initialPersons.filter(person =>
           person.name.toLowerCase().includes(newSearchValue.toLowerCase())
         ))
       })
@@ -33,10 +34,10 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    axios
-      .post('http://localhost:3001/persons', newPerson)
-      .then(response => {
-        const updatedPersons = persons.concat(response.data)
+    personService
+      .create(newPerson)
+      .then(returnedPerson => {
+        const updatedPersons = persons.concat(returnedPerson)
         setPersons(updatedPersons)
         setFilteredPersons(updatedPersons.filter(person =>
           person.name.toLowerCase().includes(newSearchValue.toLowerCase())
