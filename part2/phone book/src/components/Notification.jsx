@@ -1,11 +1,4 @@
 const Notification = ({message, errorMessage}) => {
-    // if(message === null) {
-    //     return null
-    // }
-    // if(errorMessage === null) {
-    //     return null
-    // }
-
     if(message) {
         return (
             <div className="success">
