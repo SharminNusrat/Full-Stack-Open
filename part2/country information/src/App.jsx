@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const App = () => {
   const [countries, setCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
   const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
@@ -13,8 +14,19 @@ const App = () => {
       })
   }, [])
 
+  useEffect(() => {
+    if(filteredCountries.length === 1) {
+      setSelectedCountry(filteredCountries[0])
+    }
+  }, [selectedCountry])
+
   const handleSearchValueChange = (event) => {
     setSearchValue(event.target.value)
+    setSelectedCountry(null)
+  }
+
+  const handleShowCountry = (country) => {
+    setSelectedCountry(country)
   }
 
   const filteredCountries = countries.filter(country => {
@@ -24,28 +36,32 @@ const App = () => {
   })
 
   console.log(filteredCountries)
+  console.log(selectedCountry)
 
   return (
     <div>
       <div>find countries <input value={searchValue} onChange={handleSearchValueChange} /></div>
+
       {filteredCountries.length > 10 ? (
         <p>Too many countries, specify another filter</p>
       ) : filteredCountries.length > 1 ? (
         filteredCountries.map(country =>
-          <p key={country.name.common}>{country.name.common}</p>
+          <p key={country.name.common}>{country.name.common} <button onClick={() => handleShowCountry(country)}>show</button></p> 
         )
-      ) : filteredCountries.length === 1 ? (
+      ) : null}  
+
+      {selectedCountry ? (
         <div>
-          <h1>{filteredCountries[0].name.common}</h1>
-          <p>Capital {filteredCountries[0].capital}</p>
-          <p>Area {filteredCountries[0].area}</p>
+          <h1>{selectedCountry.name.common}</h1>
+          <p>Capital {selectedCountry.capital}</p>
+          <p>Area {selectedCountry.area}</p>
           <h2>Languages</h2>
           <ul>
-            {Object.values(filteredCountries[0].languages).map((language) =>
+            {Object.values(selectedCountry.languages).map((language) =>
               <li key={language}>{language}</li>
             )}
           </ul>
-          <img src={filteredCountries[0].flags.png} />
+          <img src={selectedCountry.flags.png} />
         </div>
       ) : null}
     </div>
