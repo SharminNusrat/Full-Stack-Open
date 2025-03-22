@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
+const apiKey = import.meta.env.VITE_API_KEY
+const apiUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&q='
+const iconUrl = 'https://openweathermap.org/img/wn/'
+
 const App = () => {
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState(null)
   const [searchValue, setSearchValue] = useState('')
+  const [weather, setWeather] = useState(null)
 
   useEffect(() => {
     axios
@@ -13,12 +18,6 @@ const App = () => {
         setCountries(response.data)
       })
   }, [])
-
-  useEffect(() => {
-    if(filteredCountries.length === 1) {
-      setSelectedCountry(filteredCountries[0])
-    }
-  }, [selectedCountry])
 
   const handleSearchValueChange = (event) => {
     setSearchValue(event.target.value)
@@ -35,8 +34,21 @@ const App = () => {
     }
   })
 
-  console.log(filteredCountries)
-  console.log(selectedCountry)
+  useEffect(() => {
+    if (filteredCountries.length === 1) {
+      setSelectedCountry(filteredCountries[0])
+    }
+  }, [filteredCountries])
+
+  useEffect(() => {
+    if (selectedCountry) {
+      axios
+        .get(apiUrl + selectedCountry.capital + `&appid=${apiKey}`)
+        .then(response => {
+          setWeather(response.data)
+        })
+    }
+  }, [selectedCountry])
 
   return (
     <div>
@@ -46,9 +58,9 @@ const App = () => {
         <p>Too many countries, specify another filter</p>
       ) : filteredCountries.length > 1 ? (
         filteredCountries.map(country =>
-          <p key={country.name.common}>{country.name.common} <button onClick={() => handleShowCountry(country)}>show</button></p> 
+          <p key={country.name.common}>{country.name.common} <button onClick={() => handleShowCountry(country)}>show</button></p>
         )
-      ) : null}  
+      ) : null}
 
       {selectedCountry ? (
         <div>
@@ -62,6 +74,14 @@ const App = () => {
             )}
           </ul>
           <img src={selectedCountry.flags.png} />
+          <h2>Weather in {selectedCountry.capital}</h2>
+          {weather ? (
+            <div>
+              <p className='temp'>Temperature {weather.main.temp} Celsius</p>
+              <img src={iconUrl + weather.weather[0].icon + `@2x.png`} />
+              <p className='wind'>Wind {weather.wind.speed} m/s</p>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>
