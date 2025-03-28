@@ -21,13 +21,10 @@ let persons = [
         id: "4",
         name: "Mary Poppendieck",
         number: "39-23-6423122"
-    },
-    {
-        id: "5",
-        name: "Emily Johnson",
-        number: "39-23-6442422"
     }
 ]
+
+app.use(express.json())
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -55,6 +52,29 @@ app.get('/api/persons/:id', (request, response) => {
     else {
         response.status(404).end()
     }
+})
+
+const generateId = () => {
+    return Math.floor(Math.random() * 10000000) + 1
+}
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+    
+    if(!body.name || !body.number) {
+        return response.status(400).json({
+            error: 'some information missing'
+        })
+    }
+
+    const newPerson = {
+        id: generateId(),
+        name: body.name,
+        number: body.number
+    }
+
+    persons.concat(newPerson)
+    response.json(newPerson)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
