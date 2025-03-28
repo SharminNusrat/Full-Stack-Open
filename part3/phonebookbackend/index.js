@@ -25,8 +25,26 @@ let persons = [
     }
 ]
 
+morgan.token('data', (request, response) => {
+    if(request.method === 'POST') {
+        return JSON.stringify(request.body)
+    } 
+    else return ''
+})
+
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morgan((tokens, req, res) => {
+    const data = tokens.data(req, res)
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'),
+        '-',
+        tokens['response-time'](req, res), 'ms',
+        data? ` ${data}` : ''
+    ].join(' ')
+}))
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
