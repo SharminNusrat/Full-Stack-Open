@@ -95,7 +95,7 @@ const App = () => {
           setFilteredPersons(updatedPersons.filter(person =>
             person.name.toLowerCase().includes(newSearchValue.toLowerCase())
           ))
-          setMessage(`Removed ${returnedPerson.name}`)
+          setMessage(`Removed ${person.name}`)
           setTimeout(() => {
             setMessage(null)
           }, 7000);

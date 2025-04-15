@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+app.use(cors())
 
 let persons = [
     {
@@ -63,8 +65,9 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
+    const id = Number(request.params.id)
     const person = persons.find(p => p.id === id)
+    console.log(person)
 
     if(person) {
         response.json(person)
@@ -99,12 +102,12 @@ app.post('/api/persons', (request, response) => {
         number: body.number
     }
 
-    persons.concat(newPerson)
+    persons = persons.concat(newPerson)
     response.json(newPerson)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
+    const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
 
     response.status(204).end()
