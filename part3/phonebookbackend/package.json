@@ -4,7 +4,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "cd ../part2/phonebook && npm install && npm run build && cp -r dist ../part3/phonebookbackend/",
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
