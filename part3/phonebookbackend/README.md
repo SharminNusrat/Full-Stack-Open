@@ -18,7 +18,12 @@ cd Full-Stack-Open/part3/phonebookbackend
 ```bash
 npm install
 ```
-4. Start the development server with the command
+4. Create a .env file in the root of the project with the following content:
+```bash
+PORT=3001
+MONGODB_URI=your_database_connection_string
+```
+5. Start the development server with the command
 ```bash
 npm run dev
 ```
