@@ -7,8 +7,6 @@ const app = express()
 
 const port = process.env.PORT
 
-let persons = []
-
 morgan.token('data', (request, response) => {
     if(request.method === 'POST') {
         return JSON.stringify(request.body)
@@ -35,12 +33,17 @@ app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
     const time = new Date()
-    response.send(
-        `<p>Phonebook has info for ${persons.length} people</p>
-        <p>${time}</p>`
-    )
+
+    Person.countDocuments()
+        .then((count) => {
+            response.send(
+                `<p>Phonebook has info for ${count} people</p>
+                <p>${time}</p>`
+            )
+        })
+        .catch((error) => next(error))
 })
 
 app.get('/api/persons', (request, response) => {
