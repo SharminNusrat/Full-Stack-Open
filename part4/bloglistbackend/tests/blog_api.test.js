@@ -44,9 +44,25 @@ test.only('all blogs are returend', async () => {
 
 test.only('a specific blog is within the returned blogs', async () => {
     const response = await api.get('/api/blogs')
+    console.log(response.body)
 
-    const title = response.body.map(e => e.title)
-    assert.strictEqual(title.includes('My First Blog'), true)
+    const titles = response.body.map(blog => blog.title)
+    console.log('titles ', titles)
+    assert.strictEqual(titles.includes('My First Blog'), true)
+})
+
+test.only('id exists in each blog', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => {
+        assert.ok(blog.id)
+    })
+})
+
+test.only('all ids are unique', async () => {
+    const response = await api.get('/api/blogs')
+
+    const ids = response.body.map(blog => blog.id)
+    assert.strictEqual(ids.length, new Set(ids).size)
 })
 
 after(async () => {
