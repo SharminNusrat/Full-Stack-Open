@@ -109,6 +109,30 @@ test.only('without likes field will default to the likes value 0', async () => {
     assert.strictEqual(response.body.likes, 0)
 })
 
+test.only('fails with status 400 if title is missing', async () => {
+    const newBlog = {
+        author: 'No author',
+        url: 'http://test.com'
+    }
+
+    await api 
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+})
+
+test.only('fails with status 400 if url is missing', async () => {
+    const newBlog = {
+        title: 'No url blog',
+        author: 'No author',
+    }
+
+    await api 
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
