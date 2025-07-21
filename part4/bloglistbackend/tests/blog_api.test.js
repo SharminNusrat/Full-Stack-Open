@@ -65,6 +65,35 @@ test.only('all ids are unique', async () => {
     assert.strictEqual(ids.length, new Set(ids).size)
 })
 
+// testing post api
+test.only('total number of blogs is increased by one after post request', async () => {
+    const newBlog = {
+        title: 'Test blog',
+        author: 'Test author',
+        url: 'http://test.com',
+        likes: 2
+    }
+
+    let response = await api.get('/api/blogs')
+    const totalBlogsBefore = response.body.length
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    response = await api.get('/api/blogs')
+
+    const totalBlogsAfter = response.body.length
+
+    const titles = response.body.map(r => r.title)
+
+    assert.strictEqual(totalBlogsAfter, totalBlogsBefore + 1)
+
+    assert(titles.includes('Test blog'))
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
