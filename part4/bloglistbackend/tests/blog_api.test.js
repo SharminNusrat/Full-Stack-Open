@@ -94,6 +94,21 @@ test.only('total number of blogs is increased by one after post request', async 
     assert(titles.includes('Test blog'))
 })
 
+test.only('without likes field will default to the likes value 0', async () => {
+    const newBlog = {
+        title: 'Test blog without likes',
+        author: 'test author',
+        url: 'http://nolikes.com'
+    }
+
+    const response = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect('Content-Type', /application\/json/)
+    
+    assert.strictEqual(response.body.likes, 0)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
