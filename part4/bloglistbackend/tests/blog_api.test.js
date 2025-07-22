@@ -149,6 +149,23 @@ test.only('a blog can be deleted', async () => {
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
 })
 
+test.only('returns updated blog', async () => {
+    const blogsAtStart = await blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedBlog = {
+        ...blogToUpdate,
+        likes: blogToUpdate.likes + 3
+    }
+
+    const response = await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updatedBlog)
+        .expect(200)
+    
+    assert.strictEqual(response.body.likes, blogToUpdate.likes + 3)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
