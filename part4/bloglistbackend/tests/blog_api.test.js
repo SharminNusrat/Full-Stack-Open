@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const {blogsInDb} = require('../utils/list_helper')
 
 const api = supertest(app)
 
@@ -65,7 +66,6 @@ test.only('all ids are unique', async () => {
     assert.strictEqual(ids.length, new Set(ids).size)
 })
 
-// testing post api
 test.only('total number of blogs is increased by one after post request', async () => {
     const newBlog = {
         title: 'Test blog',
@@ -131,6 +131,22 @@ test.only('fails with status 400 if url is missing', async () => {
         .post('/api/blogs')
         .send(newBlog)
         .expect(400)
+})
+
+test.only('a blog can be deleted', async () => {
+    const blogsAtStart = await blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api   
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+    
+    const blogsAtEnd = await blogsInDb()
+
+    const titles = blogsAtEnd.map(b => b.title)
+    assert(!titles.includes(blogToDelete.title))
+
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
 })
 
 after(async () => {
