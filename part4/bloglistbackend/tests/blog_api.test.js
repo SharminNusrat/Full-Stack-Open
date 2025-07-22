@@ -31,19 +31,19 @@ beforeEach(async () => {
     await blogObject.save()
 })
 
-test.only('blogs are returned as json', async () => {
+test('blogs are returned as json', async () => {
     const response = await api
         .get('/api/blogs')
         .expect(200)
         .expect('Content-Type', /application\/json/)
 })
 
-test.only('all blogs are returend', async () => {
+test('all blogs are returend', async () => {
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, testBlogs.length)
 })
 
-test.only('a specific blog is within the returned blogs', async () => {
+test('a specific blog is within the returned blogs', async () => {
     const response = await api.get('/api/blogs')
     console.log(response.body)
 
@@ -52,21 +52,21 @@ test.only('a specific blog is within the returned blogs', async () => {
     assert.strictEqual(titles.includes('My First Blog'), true)
 })
 
-test.only('id exists in each blog', async () => {
+test('id exists in each blog', async () => {
     const response = await api.get('/api/blogs')
     response.body.forEach(blog => {
         assert.ok(blog.id)
     })
 })
 
-test.only('all ids are unique', async () => {
+test('all ids are unique', async () => {
     const response = await api.get('/api/blogs')
 
     const ids = response.body.map(blog => blog.id)
     assert.strictEqual(ids.length, new Set(ids).size)
 })
 
-test.only('total number of blogs is increased by one after post request', async () => {
+test('total number of blogs is increased by one after post request', async () => {
     const newBlog = {
         title: 'Test blog',
         author: 'Test author',
@@ -94,7 +94,7 @@ test.only('total number of blogs is increased by one after post request', async 
     assert(titles.includes('Test blog'))
 })
 
-test.only('without likes field will default to the likes value 0', async () => {
+test('without likes field will default to the likes value 0', async () => {
     const newBlog = {
         title: 'Test blog without likes',
         author: 'test author',
@@ -109,7 +109,7 @@ test.only('without likes field will default to the likes value 0', async () => {
     assert.strictEqual(response.body.likes, 0)
 })
 
-test.only('fails with status 400 if title is missing', async () => {
+test('fails with status 400 if title is missing', async () => {
     const newBlog = {
         author: 'No author',
         url: 'http://test.com'
@@ -121,7 +121,7 @@ test.only('fails with status 400 if title is missing', async () => {
         .expect(400)
 })
 
-test.only('fails with status 400 if url is missing', async () => {
+test('fails with status 400 if url is missing', async () => {
     const newBlog = {
         title: 'No url blog',
         author: 'No author',
@@ -133,7 +133,7 @@ test.only('fails with status 400 if url is missing', async () => {
         .expect(400)
 })
 
-test.only('a blog can be deleted', async () => {
+test('a blog can be deleted', async () => {
     const blogsAtStart = await blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
@@ -149,7 +149,7 @@ test.only('a blog can be deleted', async () => {
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
 })
 
-test.only('returns updated blog', async () => {
+test('returns updated blog', async () => {
     const blogsAtStart = await blogsInDb()
     const blogToUpdate = blogsAtStart[0]
 
